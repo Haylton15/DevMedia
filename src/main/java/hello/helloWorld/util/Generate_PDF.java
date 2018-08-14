@@ -1,5 +1,6 @@
 package hello.helloWorld.util;
 
+import com.itextpdf.text.Chunk;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
@@ -14,16 +15,21 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import hello.helloWorld.bean.Calendario;
 import hello.helloWorld.bean.City;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Generate_PDF {
-    
+
 //    public Document retornaPdf() throws IOException{
 //        try {
 //			String file_name="C:\\Users\\Haylton\\teste.pdf";
@@ -85,8 +91,7 @@ public class Generate_PDF {
 //    
 //	
 //}
-    
-    public static ByteArrayInputStream citiesReport(List<City> cities){
+    public static ByteArrayInputStream citiesReport(List<City> cities, List<Calendario> datas) {
         Document document = new Document();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
@@ -132,18 +137,134 @@ public class Generate_PDF {
                 table.addCell(cell);
             }
 
+            //table 2
+            PdfPTable table2 = new PdfPTable(12);
+            //table2.setWidthPercentage(10);
+
+            PdfPTable table3 = new PdfPTable(12);
+            
+            PdfPCell cell;
+            PdfPCell hcell2;
+
+            hcell = new PdfPCell(new Phrase("Id", headFont));
+            hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.addCell(hcell);
+
+//            for (Calendario calendario : datas) {
+//
+//                PdfPCell cell;
+//
+//                cell = new PdfPCell(new Phrase(calendario.getId().toString()));
+//                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                table2.addCell(cell);
+//
+//                cell = new PdfPCell(new Phrase(calendario.getCadastroData().toString()));
+//                cell.setPaddingLeft(5);
+//                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//                table2.addCell(cell);
+//
+//                cell = new PdfPCell(new Phrase(String.valueOf(calendario.getCronogramaData().toString())));
+//                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+//                cell.setPaddingRight(5);
+//                table2.addCell(cell);
+//            }
+//            
+            /*for (Calendario calendario : datas) {
+                
+
+//                cell = new PdfPCell(new Phrase(calendario.getCadastroData().getMonth().getDisplayName(TextStyle.FULL, new Locale("pt"))));
+//                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                table2.addCell(cell);
+//                
+//                
+//                 //calendario.getCadastroData().getMonth().getDisplayName(TextStyle.FULL, new Locale("pt"));
+//                 if(calendario.getCronogramaData().getMonth().equals(calendario.getCadastroData().getMonth())){
+//                     cell = new PdfPCell(new Phrase(calendario.getCronogramaData().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+//                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                table2.addCell(cell);
+//                 } else{
+//                     table2.addCell(new Phrase(""));
+//                 }
+//                 
+                cell = new PdfPCell(new Phrase(calendario.getCadastroData().getMonth().getDisplayName(TextStyle.FULL, new Locale("pt"))));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                table2.addCell(cell);
+
+                if ( calendario.getCronogramaData()==null) {
+                    table2.addCell(new Phrase("----"));
+                }else{
+                    
+                    cell = new PdfPCell(new Phrase(calendario.getCronogramaData().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    table2.addCell(cell);
+                     
+                 }
+
+            }*/
+            
+            for(int i =0; i < datas.size(); i++){
+                
+                 cell = new PdfPCell(new Phrase(datas.get(i).getCadastroData().getMonth().getDisplayName(TextStyle.FULL, new Locale("pt"))));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                table2.addCell(cell);
+                
+                if(datas.get(i).getCronogramaData() == null){
+//                    Phrase phrase = new Phrase();
+//                    Chunk chunk = new Chunk("TESte");
+//                    cell.addElement(chunk);
+                    cell = new PdfPCell(new Phrase(datas.get(i).getId().toString()));
+                    table3.addCell(cell);
+                }else{
+                    
+                    cell = new PdfPCell(new Phrase(datas.get(i).getCronogramaData().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    table3.addCell(cell);
+                }
+                
+                
+                
+            }
+
+//            
+//            for(Calendario calendario : datas){
+//                 PdfPCell cell;
+//                 
+//                 //calendario.getCadastroData().getMonth().getDisplayName(TextStyle.FULL, new Locale("pt"));
+//                 cell = new PdfPCell(new Phrase(calendario.getCadastroData().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+//                //cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//                //cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                cell.setFixedHeight(10f);
+//                table2.addCell(cell);
+//                 
+//                 
+//                
+//            }
+            //hcell = new PdfPCell(table2);
+            //hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            //table.addCell(hcell);
             PdfWriter.getInstance(document, out);
             document.open();
             document.add(table);
-            
+            document.add(Chunk.NEWLINE);
+            document.add(table2);
+            document.add(table3);
+
             document.close();
-            
+
         } catch (DocumentException ex) {
-        
+
             Logger.getLogger(Generate_PDF.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return new ByteArrayInputStream(out.toByteArray());
     }
-    }
-
+}

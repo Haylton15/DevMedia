@@ -1,6 +1,8 @@
 package hello.helloWorld.controller;
 
+import hello.helloWorld.bean.Calendario;
 import hello.helloWorld.bean.City;
+import hello.helloWorld.service.ICalendarioService;
 import hello.helloWorld.service.ICityService;
 import hello.helloWorld.util.Generate_PDF;
 import java.io.ByteArrayInputStream;
@@ -27,6 +29,9 @@ public class CalculatorController {
     @Autowired
     ICityService cityService;
     //input: http:localhost:8080/square?num=12
+    @Autowired
+    ICalendarioService calendarioService;
+    
     
     @RequestMapping("/square")
     public String calculateSquare(@RequestParam int num){
@@ -56,8 +61,9 @@ public class CalculatorController {
     public ResponseEntity<InputStreamResource> citiesReport() throws IOException {
 
         List<City> cities = (List<City>) cityService.findAll();
-
-        ByteArrayInputStream bis = Generate_PDF.citiesReport(cities);
+        List<Calendario> datas = (List<Calendario>) calendarioService.findAll();
+        
+        ByteArrayInputStream bis = Generate_PDF.citiesReport(cities, datas);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=citiesreport.pdf");
