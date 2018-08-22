@@ -8,6 +8,7 @@ import hello.helloWorld.util.Generate_PDF;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
@@ -58,12 +59,17 @@ public class CalculatorController {
     
     @RequestMapping(value = "/pdfreport", method = RequestMethod.GET,
            produces = "application/pdf")
-    public ResponseEntity<InputStreamResource> citiesReport() throws IOException {
+    public ResponseEntity<InputStreamResource> citiesReport(@RequestParam String id) throws IOException {
 
         List<City> cities = (List<City>) cityService.findAll();
         List<Calendario> datas = (List<Calendario>) calendarioService.findAll();
         
-        ByteArrayInputStream bis = Generate_PDF.citiesReport(cities, datas);
+        byte[] decoded= Base64.decodeBase64(id.getBytes());
+        String decodedString = new String(decoded);
+        
+        Integer indicador = Integer.parseInt(decodedString.split("/")[0]);
+        String chave = decodedString.split("/")[1];
+        ByteArrayInputStream bis = Generate_PDF.citiesReport(cities, datas, indicador, chave);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=citiesreport.pdf");

@@ -23,10 +23,12 @@ import java.io.IOException;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class Generate_PDF {
 
@@ -91,7 +93,7 @@ public class Generate_PDF {
 //    
 //	
 //}
-    public static ByteArrayInputStream citiesReport(List<City> cities, List<Calendario> datas) {
+    public static ByteArrayInputStream citiesReport(List<City> cities, List<Calendario> datas, Integer id, String chave) {
         Document document = new Document();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
@@ -209,26 +211,41 @@ public class Generate_PDF {
 
             }*/
             
-            for(int i =0; i < datas.size(); i++){
+            List<String> datasReformuladas = new ArrayList<>();
+            
+            for(Calendario calendario : datas){
                 
-                 cell = new PdfPCell(new Phrase(datas.get(i).getCadastroData().getMonth().getDisplayName(TextStyle.FULL, new Locale("pt"))));
+                if(calendario.getCronogramaData() == null){
+                   datasReformuladas.add("");
+                }else{
+                    datasReformuladas.add(calendario.getCronogramaData().toString());
+                }
+                
+                
+                
+            }
+            
+            
+            String meses[] = {"Jan", "Fev", "Marc", "Abr", "Maio", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"};
+            String aa= "aa";
+            Stream<String> stream = datasReformuladas.stream().filter(teste -> teste.equals("") || teste.equals(aa.getClass()));
+            stream.forEach( teste -> System.out.println(teste + "teste"));
+           
+            
+            for(int i =0; i < meses.length; i++){
+                
+                 cell = new PdfPCell(new Phrase(meses[i]));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table2.addCell(cell);
                 
-                if(datas.get(i).getCronogramaData() == null){
-//                    Phrase phrase = new Phrase();
-//                    Chunk chunk = new Chunk("TESte");
-//                    cell.addElement(chunk);
-                    cell = new PdfPCell(new Phrase(datas.get(i).getId().toString()));
-                    table3.addCell(cell);
-                }else{
+                System.out.println(datasReformuladas.get(i));
                     
-                    cell = new PdfPCell(new Phrase(datas.get(i).getCronogramaData().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+                    cell = new PdfPCell(new Phrase(datasReformuladas.get(i)));
                     cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                     table3.addCell(cell);
-                }
+                
                 
                 
                 
@@ -257,6 +274,9 @@ public class Generate_PDF {
             document.add(Chunk.NEWLINE);
             document.add(table2);
             document.add(table3);
+            document.add(new Phrase(id));
+            document.add(Chunk.NEWLINE);
+            document.add(new Phrase(chave));
 
             document.close();
 
